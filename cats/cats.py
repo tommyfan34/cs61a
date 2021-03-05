@@ -124,32 +124,35 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    def helper(start, goal, limit, num):
+        if len(start) == 0:
+            return num + len(goal)
+        if len(goal) == 0:
+            return num + len(start)
+        if num > limit:
+            return limit + 1
+        if start[0] != goal[0]:
+            num += 1
+        return helper(start[1:], goal[1:], limit, num)
+        
+    return helper(start, goal, limit, 0)
     # END PROBLEM 6
 
 
 def pawssible_patches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
+    def helper(start, goal, limit, n):
+        if len(goal) == 0:
+            return len(start) + n
+        if len(start) == 0:
+            return len(goal) + n
+        if n > limit:
+            return limit + 1
+        if start[0] == goal[0]:
+            return helper(start[1:], goal[1:], limit, n)
+        return min(helper(start, goal[1:], limit, n+1), helper(start[1:], goal[1:], limit, n+1), helper(start[1:], goal, limit, n+1))
 
-    if ______________: # Fill in the condition
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-    elif ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-    else:
-        add_diff = ... # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
+    return helper(start, goal, limit, 0)
 
 def final_diff(start, goal, limit):
     """A diff function. If you implement this function, it will be used."""
