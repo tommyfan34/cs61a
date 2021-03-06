@@ -123,6 +123,7 @@ def shifty_shifts(start, goal, limit):
     in START need to be substituted to create GOAL, then adds the difference in
     their lengths.
     """
+    assert False, 'Remove this line to use your final_diff function'
     # BEGIN PROBLEM 6
     def helper(start, goal, limit, num):
         if len(start) == 0:
@@ -168,6 +169,14 @@ def report_progress(typed, prompt, user_id, send):
     """Send a report of your id and progress so far to the multiplayer server."""
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    index = 0
+    for x in typed:
+        if x != prompt[index]:
+            break
+        index += 1
+    progress = index / len(prompt)
+    send({'id': user_id, 'progress': progress})
+    return progress
     # END PROBLEM 8
 
 
@@ -194,6 +203,16 @@ def time_per_word(times_per_player, words):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    i = 0
+    result = [[0 for m in range(len(n)-1)] for n in times_per_player]
+    for x in times_per_player:
+        j = 0
+        for y in x:
+            if j != 0:
+                result[i][j-1] = y - x[j-1]
+            j += 1
+        i += 1
+    return game(words, result)
     # END PROBLEM 9
 
 
@@ -209,6 +228,19 @@ def fastest_words(game):
     word_indices = range(len(all_words(game)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    result = [[] for i in player_indices]
+    for i in word_indices:
+        for j in player_indices:
+            if j == 0:
+                index = 0
+                min_time = time(game, j, i)
+            cur_time = time(game, j, i)
+            if cur_time < min_time:
+                min_time = cur_time
+                index = j
+        result[index] += [word_at(game, i)]
+    return result
+
     # END PROBLEM 10
 
 
