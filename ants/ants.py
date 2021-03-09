@@ -566,7 +566,7 @@ class TankAnt(ContainerAnt):
     food_cost = 6
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem Optional 3
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem Optional 3
 
     def __init__(self, armor=2):
@@ -575,6 +575,10 @@ class TankAnt(ContainerAnt):
     def action(self, gamestate):
         # BEGIN Problem Optional 3
         "*** YOUR CODE HERE ***"
+        if self.contained_ant is not None:  
+            self.contained_ant.action(gamestate)
+        for x in self.place.bees[:]:
+            x.reduce_armor(self.damage)
         # END Problem Optional 3
 ############
 # Statuses #
@@ -587,6 +591,10 @@ def make_slow(action, bee):
     """
     # BEGIN Problem Optional 4
     "*** YOUR CODE HERE ***"
+    def new_action(self, gamestate):
+        if gamestate.time % 2 == 0:
+            bee.action(self, gamestate)
+    return new_action
     # END Problem Optional 4
 
 def make_scare(action, bee):
@@ -596,6 +604,8 @@ def make_scare(action, bee):
     """
     # BEGIN Problem Optional 4
     "*** YOUR CODE HERE ***"
+    def new_action(self, gamestate):
+        
     # END Problem Optional 4
 
 def apply_status(status, bee, length):
