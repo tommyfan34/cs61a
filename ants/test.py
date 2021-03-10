@@ -612,7 +612,7 @@ def make_scare(action, bee):
     "*** YOUR CODE HERE ***"
     def new_action(gamestate):
         bee.direction = False
-        return action(gamestate)
+        action(gamestate)
     return new_action
 
     # END Problem Optional 4
@@ -977,3 +977,24 @@ class AssaultPlan(dict):
     def all_bees(self):
         """Place all Bees in the beehive and return the list of Bees."""
         return [bee for wave in self.values() for bee in wave]
+
+                                                                                                           
+beehive, layout = Hive(AssaultPlan()), dry_layout                                                                               
+dimensions = (1, 9)                                                                                                             
+gamestate = GameState(None, beehive, ant_types(), layout, dimensions)                                                           
+scary = ScaryThrower()                                                                                                          
+slow = SlowThrower()                                                                                                            
+bee = Bee(3)
+gamestate.places["tunnel_0_0"].add_insect(scary)
+gamestate.places["tunnel_0_1"].add_insect(slow)
+gamestate.places["tunnel_0_3"].add_insect(bee)
+slow.action(gamestate) # slow bee
+scary.action(gamestate) # scare bee                 
+gamestate.time = 0
+bee.action(gamestate) # scared and slowed
+gamestate.time = 1
+bee.action(gamestate) # scared and slowed                  
+gamestate.time = 2
+bee.action(gamestate) # slowed
+gamestate.time = 3
+bee.action(gamestate) # slowed
