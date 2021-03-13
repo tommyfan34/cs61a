@@ -288,6 +288,10 @@ class LambdaFunction(Value):
             raise TypeError("Oof! Cannot apply number {} to arguments {}".format(
                 comma_separated(self.parameters), comma_separated(arguments)))
         "*** YOUR CODE HERE ***"
+        parent_copy = self.parent.copy()
+        for i in range(len(self.parameters)):
+            parent_copy[self.parameters[i]] = arguments[i]
+        return self.body.eval(parent_copy)
 
     def __str__(self):
         definition = LambdaExpr(self.parameters, self.body)
@@ -309,7 +313,11 @@ class PrimitiveFunction(Value):
             if type(arg) != Number:
                 raise TypeError("Invalid arguments {} to {}".format(
                     comma_separated(arguments), self))
-        return Number(self.operator(*[arg.value for arg in arguments]))
+        try:
+            return Number(self.operator(*[arg.value for arg in arguments]))
+        except ZeroDivisionError as e:
+            print('Error: Division by zero')
+            return float('inf')
 
     def __str__(self):
         return '<primitive function {}>'.format(self.operator.__name__)
