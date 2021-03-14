@@ -72,7 +72,12 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 7
-    return scheme_eval(expressions.first, env) # replace this with lines of your own code
+    if expressions is nil:
+        return None
+    ret = scheme_eval(expressions.first, env)
+    if expressions.rest is not nil:
+        ret = eval_all(expressions.rest, env)
+    return ret
     # END PROBLEM 7
 
 ################
@@ -127,6 +132,14 @@ class Frame(object):
             raise SchemeError('Incorrect number of arguments to function call')
         # BEGIN PROBLEM 10
         "*** YOUR CODE HERE ***"
+        new_frame = Frame(self)
+        cur_formal = formals
+        cur_val = vals
+        while cur_formal is not nil:
+            new_frame.bindings[cur_formal.first] = cur_val.first
+            cur_formal = cur_formal.rest
+            cur_val = cur_val.rest
+        return new_frame
         # END PROBLEM 10
 
 ##############
@@ -191,11 +204,12 @@ class LambdaProcedure(Procedure):
         self.body = body
         self.env = env
 
-    def make_call_frame(self, args, env):
+    def make_call_frame(self, args, env): 
         """Make a frame that binds my formal parameters to ARGS, a Scheme list
         of values, for a lexically-scoped call evaluated in environment ENV."""
         # BEGIN PROBLEM 11
         "*** YOUR CODE HERE ***"
+        return self.env.make_child_frame(self.formals, args)
         # END PROBLEM 11
 
     def __str__(self):
@@ -263,6 +277,10 @@ def do_define_form(expressions, env):
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
         "*** YOUR CODE HERE ***"
+        proc_name = target.first
+        func = do_lambda_form(Pair(target.rest, expressions.rest), env)
+        env.bindings[proc_name] = func
+        return proc_name
         # END PROBLEM 9
     else:
         bad_target = target.first if isinstance(target, Pair) else target
@@ -278,6 +296,7 @@ def do_quote_form(expressions, env):
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+    return expressions.first
     # END PROBLEM 6
 
 def do_begin_form(expressions, env):
@@ -304,6 +323,7 @@ def do_lambda_form(expressions, env):
     validate_formals(formals)
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    return LambdaProcedure(expressions.first, expressions.rest, env)
     # END PROBLEM 8
 
 def do_if_form(expressions, env):
@@ -336,6 +356,15 @@ def do_and_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return True
+    val = scheme_eval(expressions.first, env)
+    if is_true_primitive(val):
+        if expressions.rest is nil:
+            return val
+        return do_and_form(expressions.rest, env)
+    else:
+        return False
     # END PROBLEM 12
 
 def do_or_form(expressions, env):
@@ -353,6 +382,13 @@ def do_or_form(expressions, env):
     """
     # BEGIN PROBLEM 12
     "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return False
+    val = scheme_eval(expressions.first, env)
+    if is_false_primitive(val):
+        return do_or_form(expressions.rest, env)
+    else:
+        return val
     # END PROBLEM 12
 
 def do_cond_form(expressions, env):
@@ -373,6 +409,10 @@ def do_cond_form(expressions, env):
         if is_true_primitive(test):
             # BEGIN PROBLEM 13
             "*** YOUR CODE HERE ***"
+            if clause.rest is nil:
+                return test
+            else:
+                return eval_all(clause.rest, env)
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -397,6 +437,16 @@ def make_let_frame(bindings, env):
     names, values = nil, nil
     # BEGIN PROBLEM 14
     "*** YOUR CODE HERE ***"
+    cur = bindings
+    while cur is not nil:
+        b = cur.first
+        validate_form(b, 2, 2)
+        name = b.first
+        arg = scheme_eval(b.rest.first, env)
+        names = Pair(name, names)
+        values = Pair(arg, values)
+        cur = cur.rest
+    validate_formals(names)
     # END PROBLEM 14
     return env.make_child_frame(names, values)
 
