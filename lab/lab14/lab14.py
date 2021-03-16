@@ -43,7 +43,19 @@ def num_splits(s, d):
     12
     """
     "*** YOUR CODE HERE ***"
-    
+    sum_list = sum(s)
+    lower = (sum_list - d) / 2
+    upper = (sum_list + d) / 2
+    len_list = len(s)
+    num = 0
+    for i in range(pow(2, len_list)):
+        result = 0
+        for j in range(len_list - 1, 0, -1):
+            result += s[j] * (i % 2)
+            i = i // 2
+        if lower <= result <= upper:
+            num += 1
+    return num // 2
 
 
 class Account(object):
@@ -109,9 +121,19 @@ class CheckingAccount(Account):
         return Account.withdraw(self, amount + self.withdraw_fee)
 
     "*** YOUR CODE HERE ***"
+    def deposit_check(self, check):
+        if check.name is self.holder and check.deposited is False:
+            check.deposited = True
+            return self.deposit(check.amount)
+        else:
+            print('The police have been notified.')
 
 class Check(object):
     "*** YOUR CODE HERE ***"
+    def __init__(self, name, amount):
+        self.name = name
+        self.amount = amount
+        self.deposited = False
 
 
 def align_skeleton(skeleton, code):
@@ -189,7 +211,22 @@ def foldl(link, fn, z):
     if link is Link.empty:
         return z
     "*** YOUR CODE HERE ***"
-    return foldl(______, ______, ______)
+    return foldl(link.rest, fn, fn(z, link.first))
+
+def foldr(link, fn, z):
+    """ Right fold
+    >>> lst = Link(3, Link(2, Link(1)))
+    >>> foldr(lst, sub, 0) # (3 - (2 - (1 - 0)))
+    2
+    >>> foldr(lst, add, 0) # (3 + (2 + (1 + 0)))
+    6
+    >>> foldr(lst, mul, 1) # (3 * (2 * (1 * 1)))
+    6
+    """
+    "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return z
+    return fn(link.first, foldr(link.rest, fn, z))
 
 
 def filterl(lst, pred):
@@ -199,6 +236,9 @@ def filterl(lst, pred):
     Link(4, Link(2))
     """
     "*** YOUR CODE HERE ***"
+    if lst is Link.empty:
+        return lst
+    return foldr(lst, lambda x, y: Link(x, filterl(y, pred)) if pred(x) else filterl(y, pred), Link.empty)
 
 
 def reverse(lst):
@@ -212,6 +252,7 @@ def reverse(lst):
     True
     """
     "*** YOUR CODE HERE ***"
+    return foldl(lst, lambda x, y: Link(y, x), Link.empty)
 
 
 identity = lambda x: x
@@ -228,6 +269,9 @@ def foldl2(link, fn, z):
     """
     def step(x, g):
         "*** YOUR CODE HERE ***"
+        def f(_z):
+            return fn(g(_z), x)
+        return f
     return foldr(link, step, identity)(z)
 
 
