@@ -170,31 +170,30 @@ def align_skeleton(skeleton, code):
             cost: the cost of the corrections, in edits
         """
         if skeleton_idx == len(skeleton) and code_idx == len(code):
-            return _________, ______________
+            return "", 0
         if skeleton_idx < len(skeleton) and code_idx == len(code):
             edits = "".join(["-[" + c + "]" for c in skeleton[skeleton_idx:]])
-            return _________, ______________
+            return edits, len(skeleton) - skeleton_idx - 1
         if skeleton_idx == len(skeleton) and code_idx < len(code):
             edits = "".join(["+[" + c + "]" for c in code[code_idx:]])
-            return _________, ______________
+            return edits, len(code) - code_idx - 1
         
         possibilities = []
         skel_char, code_char = skeleton[skeleton_idx], code[code_idx]
         # Match
         if skel_char == code_char:
-            _________________________________________
-            _________________________________________
-            possibilities.append((_______, ______))
+            edits_post, cost_post = helper_align(skeleton_idx+1, code_idx+1)
+            possibilities.append(((skel_char + edits_post), cost_post))
         # Insert
-        _________________________________________
-        _________________________________________
-        possibilities.append((_______, ______))
+        edits_post, cost_post = helper_align(skeleton_idx, code_idx+1)
+        edits_post = "+[" + code[code_idx] +"]" + edits_post
+        possibilities.append((edits_post, cost_post + 1))
         # Delete
-        _________________________________________
-        _________________________________________
-        possibilities.append((_______, ______))
+        edits_post, cost_post = helper_align(skeleton_idx+1, code_idx)
+        edits_post = "-[" + skeleton[skeleton_idx] +"]" + edits_post
+        possibilities.append((edits_post, cost_post + 1))
         return min(possibilities, key=lambda x: x[1])
-    result, cost = ________________________
+    result, cost = helper_align(0, 0)
     return result
 
 
