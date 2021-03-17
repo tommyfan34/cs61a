@@ -1,4 +1,4 @@
-# UCB CS61A course codes
+# UCB CS61A Fall 2020 solutions
 
 fall 2020
 course website: https://inst.eecs.berkeley.edu/~cs61a/fa20/
