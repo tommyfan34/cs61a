@@ -10,3 +10,5 @@ finished all labs and homeworks except
 + lab13 (more SQL)
 
 Basically all optional questions beside above assignments are finished (maybe 1 or 2 are left)
+
+My lecture notes (in Chinese): https://fanxiao.tech/posts/CS61A-notes/
